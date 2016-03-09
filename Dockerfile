@@ -18,6 +18,9 @@ RUN apt-get install -y crossbuild-essential-armhf
 
 # setup sshd
 RUN apt-get install -y openssh-server
+
+RUN mkdir /var/run/sshd
+# Important Note: Change password here when necessary.
 RUN echo 'root:root123' | chpasswd
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
 
