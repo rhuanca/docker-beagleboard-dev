@@ -14,22 +14,15 @@ RUN apt-get install -y git
 # install vim
 RUN apt-get install -y vim
 
-# prepare for arm cross compiler installation
-RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
-RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | apt-key add -
-RUN dpkg --add-architecture armhf
-
-# update sources
-RUN apt-get update
-
-# install arm cross compiler
-RUN apt-get install -y crossbuild-essential-armhf
-
-# install lzop
+# install lzop 
 RUN apt-get install -y lzop
 
-# install libssl-dev
-RUN apt-get install -y libssl-dev
+# Set the locale
+RUN apt-get install -y locales
+#RUN locale-gen en_US.UTF-8
+#ENV LANG en_US.UTF-8
+#ENV LANGUAGE en_US:en
+#ENV LC_ALL en_US.UTF-8
 
 # install tftp server
 COPY policy-rc.d /usr/sbin/policy-rc.d
@@ -39,14 +32,6 @@ RUN mkdir /tftpboot
 RUN chmod -R 777 /tftpboot
 RUN chown -R nobody /tftpboot
 
-
-# Install u-boot
-RUN wget ftp://ftp.denx.de/pub/u-boot/u-boot-2016.01.tar.bz2
-RUN tar -xjf u-boot-2016.01.tar.bz2
-RUN cd u-boot-2016.01; make sandbox_defconfig tools-only; install tools/mkimage /usr/local/bin
-
-# Get beagle board kernel
-# RUN git clone git://github.com/beagleboard/linux.git
 
 # setup sshd
 RUN apt-get install -y openssh-server
@@ -66,3 +51,15 @@ EXPOSE 22 69
 CMD ["/usr/sbin/sshd", "-D"]
 
 #CMD ["/usr/sbin/in.tftpd", "--foreground", "--user tftp", "--address", "0.0.0.0:69", "--secure", "/tftpboot"]
+
+
+
+#code i want to make it work
+#ENV LANGUAGE en_US.UTF-8
+#ENV LANG en_US.UTF-8
+#ENV LC_ALL en_US.UTF-8
+#RUN locale-gen en_US.UTF-8
+#RUN dpkg-reconfigure locales
+#http://daker.me/2014/10/how-to-fix-perl-warning-setting-locale-failed-in-raspbian.html
+
+
