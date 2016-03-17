@@ -11,6 +11,9 @@ RUN apt-get install -y wget
 # install git
 RUN apt-get install -y git
 
+# install vim
+RUN apt-get install -y vim
+
 # prepare for arm cross compiler installation
 RUN echo "deb http://emdebian.org/tools/debian/ jessie main" > /etc/apt/sources.list.d/crosstools.list
 RUN curl http://emdebian.org/tools/debian/emdebian-toolchain-archive.key | apt-key add -
@@ -29,12 +32,13 @@ RUN apt-get install -y lzop
 RUN apt-get install -y libssl-dev
 
 # install tftp server
-#RUN apt-get install -y xinetd tftpd tftp
-#COPY tftp /etc/xinetd.d/
-#RUN mkdir /tftpboot
-#RUN chmod -R 777 /tftpboot
-#RUN chown -R nobody /tftpboot
-#RUN service xinetd restart
+COPY policy-rc.d /usr/sbin/policy-rc.d
+RUN apt-get install -y xinetd tftpd tftp
+COPY tftp /etc/xinetd.d/
+RUN mkdir /tftpboot
+RUN chmod -R 777 /tftpboot
+RUN chown -R nobody /tftpboot
+
 
 # Install u-boot
 RUN wget ftp://ftp.denx.de/pub/u-boot/u-boot-2016.01.tar.bz2
@@ -47,7 +51,7 @@ RUN cd u-boot-2016.01; make sandbox_defconfig tools-only; install tools/mkimage 
 # setup sshd
 RUN apt-get install -y openssh-server
 
-RUN mkdir /var/run/sshd
+#RUN mkdir /var/run/sshd # Do not delete this line yet
 # Important Note: Change password here when necessary.
 RUN echo 'root:root123' | chpasswd
 RUN sed -i 's/PermitRootLogin without-password/PermitRootLogin yes/' /etc/ssh/sshd_config
@@ -60,3 +64,5 @@ RUN echo "export VISIBLE=now" >> /etc/profile
 
 EXPOSE 22 69
 CMD ["/usr/sbin/sshd", "-D"]
+
+#CMD ["/usr/sbin/in.tftpd", "--foreground", "--user tftp", "--address", "0.0.0.0:69", "--secure", "/tftpboot"]
