@@ -61,5 +61,5 @@ CMD ["/usr/sbin/sshd", "-D"]
 #RUN locale-gen en_US.UTF-8
 #RUN dpkg-reconfigure locales
 #http://daker.me/2014/10/how-to-fix-perl-warning-setting-locale-failed-in-raspbian.html
-
+#https://people.debian.org/~schultmc/locales.html
 
