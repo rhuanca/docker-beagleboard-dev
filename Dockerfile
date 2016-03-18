@@ -18,11 +18,13 @@ RUN apt-get install -y vim
 RUN apt-get install -y lzop
 
 # Set the locale
+COPY locale.gen /etc/locale.gen
 RUN apt-get install -y locales
-#RUN locale-gen en_US.UTF-8
-#ENV LANG en_US.UTF-8
-#ENV LANGUAGE en_US:en
-#ENV LC_ALL en_US.UTF-8
+ENV LANGUAGE en_US.UTF-8
+ENV LANG en_US.UTF-8
+ENV LC_ALL en_US.UTF-8
+RUN locale-gen en_US.UTF-8
+#RUN dpkg-reconfigure locales
 
 # install tftp server
 COPY policy-rc.d /usr/sbin/policy-rc.d
@@ -31,7 +33,6 @@ COPY tftp /etc/xinetd.d/
 RUN mkdir /tftpboot
 RUN chmod -R 777 /tftpboot
 RUN chown -R nobody /tftpboot
-
 
 # setup sshd
 RUN apt-get install -y openssh-server
